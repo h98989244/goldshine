@@ -69,30 +69,30 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative h-[600px] bg-gradient-to-br from-amber-900 via-amber-800 to-amber-950 overflow-hidden">
+      <section className="relative h-[360px] md:h-[420px] bg-gradient-to-br from-amber-900 via-amber-800 to-amber-950 overflow-hidden">
         <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-20 left-20 w-64 h-64 bg-yellow-400 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-amber-500 rounded-full blur-3xl"></div>
+          <div className="absolute top-10 left-10 w-40 h-40 bg-yellow-400 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 right-10 w-60 h-60 bg-amber-500 rounded-full blur-3xl"></div>
         </div>
         <div className="relative max-w-7xl mx-auto px-4 h-full flex items-center">
-          <div className="max-w-2xl">
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+          <div className="max-w-xl">
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">
               璀璨金飾<br />
               <span className="text-yellow-400">傳承經典</span>
             </h1>
-            <p className="text-xl text-amber-100 mb-8">
+            <p className="text-base md:text-lg text-amber-100 mb-6">
               金銀山有限公司嚴選頂級黃金，以精湛工藝打造每一件飾品，讓您的每個重要時刻都閃耀動人。
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-3">
               <Link
                 to="/products"
-                className="bg-yellow-500 text-amber-900 px-8 py-4 rounded-lg font-bold text-lg hover:bg-yellow-400 transition shadow-lg"
+                className="bg-yellow-500 text-amber-900 px-6 py-3 rounded-lg font-bold text-base hover:bg-yellow-400 transition shadow-lg"
               >
                 探索商品
               </Link>
               <Link
                 to="/stores"
-                className="border-2 border-yellow-500 text-yellow-500 px-8 py-4 rounded-lg font-bold text-lg hover:bg-yellow-500 hover:text-amber-900 transition"
+                className="border-2 border-yellow-500 text-yellow-500 px-6 py-3 rounded-lg font-bold text-base hover:bg-yellow-500 hover:text-amber-900 transition"
               >
                 門市據點
               </Link>
