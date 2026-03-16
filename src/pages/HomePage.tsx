@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
-import { Shield, Truck, Award, HeadphonesIcon, ChevronRight, Star } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { Shield, Truck, Award, HeadphonesIcon, ChevronRight, ChevronLeft, Star } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+import useEmblaCarousel from 'embla-carousel-react'
 import { useI18n } from '../contexts/I18nContext'
 import { useCart } from '../contexts/CartContext'
 
@@ -17,6 +18,22 @@ export default function HomePage() {
   const { t } = useI18n()
   const { goldPrice, currency } = useCart()
   const [imageLoadingStates, setImageLoadingStates] = useState<Record<number, boolean>>({})
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start', slidesToScroll: 1 })
+  const [canScrollPrev, setCanScrollPrev] = useState(false)
+  const [canScrollNext, setCanScrollNext] = useState(false)
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return
+    setCanScrollPrev(emblaApi.canScrollPrev())
+    setCanScrollNext(emblaApi.canScrollNext())
+  }, [emblaApi])
+
+  useEffect(() => {
+    if (!emblaApi) return
+    onSelect()
+    emblaApi.on('select', onSelect)
+    return () => { emblaApi.off('select', onSelect) }
+  }, [emblaApi, onSelect])
 
   const formatPrice = (weight: number) => {
     if (!goldPrice) return '-'
@@ -141,43 +158,63 @@ export default function HomePage() {
       </section>
 
       {/* 精選商品 */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-12 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between items-center mb-10">
-            <h2 className="text-3xl font-bold text-gray-800">精選商品</h2>
-            <Link to="/products" className="flex items-center gap-1 text-amber-600 hover:text-amber-700 font-medium">
-              查看全部 <ChevronRight size={20} />
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-800">精選商品</h2>
+            <Link to="/products" className="flex items-center gap-1 text-amber-600 hover:text-amber-700 font-medium text-sm">
+              查看全部 <ChevronRight size={18} />
             </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {featuredProducts.map((product) => (
-              <Link
-                key={product.id}
-                to={`/products/${product.id}`}
-                className="bg-white rounded-xl shadow-md overflow-hidden group hover:shadow-xl transition"
-              >
-                <div className="aspect-square overflow-hidden relative">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className={`w-full h-full object-cover group-hover:scale-105 transition duration-300 ${imageLoadingStates[product.id] ? 'opacity-100' : 'opacity-0'
-                      }`}
-                    onLoad={() => handleImageLoad(product.id)}
-                    onError={(e) => handleImageError(e, product)}
-                  />
-                  {!imageLoadingStates[product.id] && (
-                    <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
-                      <div className="w-24 h-24 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-full opacity-80"></div>
+          <div className="relative">
+            <div className="overflow-hidden" ref={emblaRef}>
+              <div className="flex gap-4">
+                {featuredProducts.map((product) => (
+                  <Link
+                    key={product.id}
+                    to={`/products/${product.id}`}
+                    className="flex-[0_0_45%] md:flex-[0_0_23%] min-w-0 bg-white rounded-xl shadow-md overflow-hidden group hover:shadow-xl transition"
+                  >
+                    <div className="aspect-square overflow-hidden relative">
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        loading="lazy"
+                        className={`w-full h-full object-cover group-hover:scale-105 transition duration-300 ${imageLoadingStates[product.id] ? 'opacity-100' : 'opacity-0'}`}
+                        onLoad={() => handleImageLoad(product.id)}
+                        onError={(e) => handleImageError(e, product)}
+                      />
+                      {!imageLoadingStates[product.id] && (
+                        <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+                          <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-full opacity-80"></div>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <div className="p-4">
-                  <h3 className="font-semibold text-gray-800 mb-1">{product.name}</h3>
-                  <p className="text-sm text-gray-500 mb-2">重量: {product.weight}g</p>
-                  <p className="text-amber-600 font-bold">{formatPrice(product.weight)}</p>
-                </div>
-              </Link>
-            ))}
+                    <div className="p-3">
+                      <h3 className="font-semibold text-gray-800 text-sm mb-1">{product.name}</h3>
+                      <p className="text-xs text-gray-500 mb-1">重量: {product.weight}g</p>
+                      <p className="text-amber-600 font-bold text-sm">{formatPrice(product.weight)}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+            {canScrollPrev && (
+              <button
+                onClick={() => emblaApi?.scrollPrev()}
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 w-9 h-9 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition z-10"
+              >
+                <ChevronLeft size={18} className="text-gray-600" />
+              </button>
+            )}
+            {canScrollNext && (
+              <button
+                onClick={() => emblaApi?.scrollNext()}
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 w-9 h-9 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition z-10"
+              >
+                <ChevronRight size={18} className="text-gray-600" />
+              </button>
+            )}
           </div>
         </div>
       </section>
