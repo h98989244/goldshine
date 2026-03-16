@@ -60,29 +60,6 @@ export default function HomePage() {
     }
   }
 
-  // Debug: Check LIFF Profile
-  useEffect(() => {
-    const checkLiff = async () => {
-      try {
-        if (window.liff) {
-          const liffId = import.meta.env.VITE_LIFF_ID
-          if (liffId && !(window.liff as any).id) {
-            await window.liff.init({ liffId })
-          }
-          if (window.liff.isLoggedIn()) {
-            const profile = await window.liff.getProfile()
-            console.log('LIFF Profile:', profile)
-          } else {
-            console.log('LIFF Status: Not Logged In')
-          }
-        }
-      } catch (e) {
-        console.error('LIFF Debug Error:', e)
-      }
-    }
-    checkLiff()
-  }, [])
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
