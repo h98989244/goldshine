@@ -71,27 +71,15 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section - 商品圖片輪播背景 */}
-      <section className="relative h-[400px] md:h-[480px] overflow-hidden bg-amber-950">
-        {/* 輪播背景圖片 */}
-        {heroImages.map((img, i) => (
-          <div
-            key={i}
-            className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
-            style={{ opacity: heroIndex === i ? 1 : 0 }}
-          >
-            <img
-              src={img}
-              alt=""
-              className="w-full h-full object-cover"
-            />
-          </div>
-        ))}
-        {/* 深色遮罩讓文字可讀 */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30"></div>
-        {/* 文字內容 */}
-        <div className="relative max-w-7xl mx-auto px-4 h-full flex items-center z-10">
-          <div className="max-w-xl">
+      {/* Hero Section - 左文右圖輪播 */}
+      <section className="relative bg-gradient-to-br from-amber-950 via-amber-900 to-amber-950 overflow-hidden py-10 md:py-16">
+        {/* 裝飾光暈 */}
+        <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-yellow-500/10 rounded-full blur-3xl -translate-y-1/2"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-yellow-600/5 rounded-full blur-2xl"></div>
+
+        <div className="relative max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center gap-8 md:gap-12 z-10">
+          {/* 左側文字 */}
+          <div className="w-full md:w-1/2 text-center md:text-left">
             <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight drop-shadow-lg">
               璀璨金飾<br />
               <span className="text-yellow-400">傳承經典</span>
@@ -99,7 +87,7 @@ export default function HomePage() {
             <p className="text-base md:text-lg text-gray-200 mb-6 drop-shadow">
               金銀山有限公司嚴選頂級黃金，以精湛工藝打造每一件飾品，讓您的每個重要時刻都閃耀動人。
             </p>
-            <div className="flex gap-3">
+            <div className="flex gap-3 justify-center md:justify-start">
               <Link
                 to="/products"
                 className="bg-yellow-500 text-amber-900 px-6 py-3 rounded-lg font-bold text-base hover:bg-yellow-400 transition shadow-lg"
@@ -114,22 +102,43 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
-        </div>
-        {/* 輪播指示點 */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-          {heroImages.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => {
-                setHeroIndex(i)
-                if (heroTimerRef.current) clearInterval(heroTimerRef.current)
-                heroTimerRef.current = setInterval(() => {
-                  setHeroIndex(prev => (prev + 1) % heroImages.length)
-                }, 4000)
-              }}
-              className={`w-2.5 h-2.5 rounded-full transition-all ${heroIndex === i ? 'bg-yellow-400 w-6' : 'bg-white/50 hover:bg-white/80'}`}
-            />
-          ))}
+
+          {/* 右側商品圖片輪播 */}
+          <div className="w-full md:w-1/2 flex flex-col items-center">
+            <div className="relative w-64 h-64 md:w-80 md:h-80">
+              {heroImages.map((img, i) => (
+                <div
+                  key={i}
+                  className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+                  style={{ opacity: heroIndex === i ? 1 : 0 }}
+                >
+                  <img
+                    src={img}
+                    alt=""
+                    className="w-full h-full object-contain drop-shadow-2xl"
+                  />
+                </div>
+              ))}
+              {/* 圖片底部金色光暈 */}
+              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-3/4 h-8 bg-yellow-500/20 rounded-full blur-xl"></div>
+            </div>
+            {/* 輪播指示點 */}
+            <div className="flex gap-2 mt-6">
+              {heroImages.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => {
+                    setHeroIndex(i)
+                    if (heroTimerRef.current) clearInterval(heroTimerRef.current)
+                    heroTimerRef.current = setInterval(() => {
+                      setHeroIndex(prev => (prev + 1) % heroImages.length)
+                    }, 4000)
+                  }}
+                  className={`w-2.5 h-2.5 rounded-full transition-all ${heroIndex === i ? 'bg-yellow-400 w-6' : 'bg-white/50 hover:bg-white/80'}`}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
