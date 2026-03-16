@@ -6,9 +6,9 @@ import { useI18n } from '../contexts/I18nContext'
 import { useCart } from '../contexts/CartContext'
 
 const featuredProducts = [
-  { id: 1, name: '經典黃金項鍊', weight: 3.75, image: '/images/gold-necklace-classic.jpg', fallback: '/images/gold-necklace-classic-small.jpg' },
-  { id: 2, name: '時尚黃金戒指', weight: 2.5, image: '/images/gold-ring-fashion.jpg', fallback: '/images/gold-ring-fashion-small.jpg' },
-  { id: 3, name: '優雅黃金手鐲', weight: 15.0, image: '/images/gold-bracelet-elegant.jpg', fallback: '/images/gold-bracelet-elegant-small.jpg' },
+  { id: 1, name: '經典黃金項鍊', weight: 3.75, image: '/images/gold-necklace-classic-small.jpg' },
+  { id: 2, name: '時尚黃金戒指', weight: 2.5, image: '/images/gold-ring-fashion-small.jpg' },
+  { id: 3, name: '優雅黃金手鐲', weight: 15.0, image: '/images/gold-bracelet-elegant-small.jpg' },
   { id: 4, name: '精緻黃金耳環', weight: 1.2, image: '/images/gold-earrings-delicate.jpg' },
   { id: 5, name: '福字黃金吊墜', weight: 2.8, image: '/images/gold-pendant-fortune.jpg' },
   { id: 6, name: '龍鳳黃金對戒', weight: 4.2, image: '/images/gold-rings-dragon-phoenix.jpg' },
@@ -17,7 +17,7 @@ const featuredProducts = [
 export default function HomePage() {
   const { t } = useI18n()
   const { goldPrice, currency } = useCart()
-  const [imageLoadingStates, setImageLoadingStates] = useState<Record<number, boolean>>({})
+  const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({})
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start', slidesToScroll: 1 })
   const [canScrollPrev, setCanScrollPrev] = useState(false)
   const [canScrollNext, setCanScrollNext] = useState(false)
@@ -43,21 +43,8 @@ export default function HomePage() {
     return currency === 'TWD' ? `NT$ ${price.toLocaleString()}` : `${price.toLocaleString()} VND`
   }
 
-  const handleImageLoad = (productId: number) => {
-    setImageLoadingStates(prev => ({ ...prev, [productId]: true }))
-  }
-
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>, product: any) => {
-    const img = e.target as HTMLImageElement
-    if (product.fallback && img.src !== product.fallback) {
-      img.src = product.fallback
-    } else {
-      // 如果所有圖片都載入失敗，顯示備用圖標
-      const parent = img.parentElement
-      if (parent) {
-        parent.innerHTML = '<div class="w-full h-full bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center"><div class="w-24 h-24 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-full opacity-80 group-hover:scale-110 transition"></div></div>'
-      }
-    }
+  const handleImageError = (productId: number) => {
+    setImageErrors(prev => ({ ...prev, [productId]: true }))
   }
 
   return (
@@ -152,19 +139,19 @@ export default function HomePage() {
                     to={`/products/${product.id}`}
                     className="flex-[0_0_45%] md:flex-[0_0_23%] min-w-0 bg-white rounded-xl shadow-md overflow-hidden group hover:shadow-xl transition"
                   >
-                    <div className="aspect-square overflow-hidden relative">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        loading="lazy"
-                        className={`w-full h-full object-cover group-hover:scale-105 transition duration-300 ${imageLoadingStates[product.id] ? 'opacity-100' : 'opacity-0'}`}
-                        onLoad={() => handleImageLoad(product.id)}
-                        onError={(e) => handleImageError(e, product)}
-                      />
-                      {!imageLoadingStates[product.id] && (
-                        <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+                    <div className="aspect-square overflow-hidden relative bg-gradient-to-br from-amber-100 to-amber-200">
+                      {imageErrors[product.id] ? (
+                        <div className="w-full h-full flex items-center justify-center">
                           <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-full opacity-80"></div>
                         </div>
+                      ) : (
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          loading="eager"
+                          className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                          onError={() => handleImageError(product.id)}
+                        />
                       )}
                     </div>
                     <div className="p-3">
