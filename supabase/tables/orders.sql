@@ -1,0 +1,20 @@
+CREATE TABLE orders (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES profiles(id),
+    agent_id INTEGER REFERENCES agents(id),
+    store_id INTEGER REFERENCES stores(id),
+    order_number VARCHAR(30) UNIQUE NOT NULL,
+    status VARCHAR(30) DEFAULT 'pending',
+    currency VARCHAR(10) DEFAULT 'TWD',
+    subtotal DECIMAL(15,2) NOT NULL,
+    discount DECIMAL(15,2) DEFAULT 0,
+    total DECIMAL(15,2) NOT NULL,
+    gold_price_at_order DECIMAL(10,2),
+    pickup_date DATE,
+    pickup_time_slot VARCHAR(50),
+    notes TEXT,
+    paid_at TIMESTAMPTZ,
+    completed_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
