@@ -72,7 +72,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section - 商品圖片輪播背景 */}
-      <section className="relative h-[400px] md:h-[480px] overflow-hidden bg-amber-950">
+      <section className="relative h-[280px] md:h-[360px] overflow-hidden bg-amber-950">
         {/* 輪播背景圖片 */}
         {heroImages.map((img, i) => (
           <div
